@@ -1,0 +1,31 @@
+{
+  "meta": {
+    "summary": "App Plugin Language Strings - EN"
+  },
+  "strings": {
+    "name": {
+      "text": "My Reporting Widget Plugin",
+      "context": "Plugin name"
+    },
+    "description": {
+      "text": "My Reporting Widget Plugin Description",
+      "context": "Displayed when listing plugin"
+    },
+    "longDescription": {
+      "text": "$name% Long Description",
+      "context": "This long textual description is displayed when a user clicks for more details on plugin"
+    },
+    "configurationPanel.metric": {
+      "text": "Attitude Question"
+    },
+    "configurationPanel.metric2": {
+      "text": "Behavior Question"
+    },
+    "configurationPanel.dimension": {
+      "text": "Dimension"
+    },
+    "configurationPanel.selectAField": {
+      "text": "Select a field"
+    }
+  }
+}

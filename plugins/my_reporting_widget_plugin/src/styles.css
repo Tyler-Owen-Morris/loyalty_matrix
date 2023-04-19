@@ -1,0 +1,74 @@
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0px;
+  height: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#root {
+  height: 100%;
+}
+
+.panel {
+  padding: 24px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 24px;
+  font-weight: 400;
+  color: #707070 !important;
+}
+
+.form-group:not(:first-child) {
+  margin-top: 24px;
+}
+
+.spinner {
+  text-align: center;
+  padding-top: 61px;
+}
+
+.menu-item {
+  /* Constrain the width of the menu to fit in the configuration panel's width. */
+  max-width: 240px;
+}
+
+.square-cell {
+  width: 50%;
+  height: 50%;
+  padding-bottom: 0%;
+  text-align: center;
+  vertical-align: middle;
+  border: 2px solid black;
+  font-size: 0.7em;
+  font-family: "72", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  border-radius: 10px;
+}
+
+.square-text {
+  font-size: 4.7em;
+  width: 100%;
+  align-self: center;
+  justify-self: center;
+}
+
+.square-header {
+  font-size: 1.5em;
+  width: 100%;
+  align-self: center;
+  justify-self: center;
+}
+
+.matrix-table {
+  width: 95%;
+  height: 100%;
+}

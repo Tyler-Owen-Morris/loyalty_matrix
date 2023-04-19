@@ -1,0 +1,44 @@
+{
+  "component": "fieldsets-agggregate",
+  "fieldsetId": "loyalty-matrix",
+  "metrics": [
+    {
+      "type": "custom",
+      "id": "truly-loyal",
+      "label": "Truly Loyal",
+      "equation": "Loyal / Total",
+      "metrics": [
+        {
+          "id": "Loyal",
+          "field": "_recordId",
+          "function": "count",
+          "label": "Responsed",
+          "filters": [
+            {
+              "type": "filter",
+              "filter": {
+                "field": "attitude-question",
+                "operator": "greater-than",
+                "operand": 3
+              }
+            },
+            {
+              "type": "filter",
+              "filter": {
+                "field": "behavior-question",
+                "operator": "greater-than",
+                "operand": 3
+              }
+            },
+            {
+              "id": "Total",
+              "field": "_recordId",
+              "label": "Total",
+              "function": "count"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
