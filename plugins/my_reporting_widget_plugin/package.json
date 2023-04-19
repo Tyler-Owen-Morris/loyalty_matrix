@@ -5,7 +5,7 @@
   "private": true,
   "license": "ISC",
   "scripts": {
-    "start": "nodemon -w ./src/ --exec \"webpack --mode development --progress --open\"",
+    "start": "SET NODE_OPTIONS=--openssl-legacy-provider && nodemon -w ./src/ --exec \"webpack --mode development --progress --open\"",
     "dev": "webpack-dev-server --mode development --progress",
     "build": "webpack --mode production --progress",
     "clean": "node ./clean.js",
