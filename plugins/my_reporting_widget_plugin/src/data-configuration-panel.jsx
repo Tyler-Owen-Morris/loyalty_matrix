@@ -12,8 +12,8 @@ import {
 
 export default function DataConfigurationPanel({ client, configuration }) {
   const [definition, setDefinition] = useState();
-  const [attitude, setAttitude] = useState({});
-  const [behavior, setBehavior] = useState({});
+  const [attitude, setAttitude] = useState(null);
+  const [behavior, setBehavior] = useState(null);
 
   useEffect(() => {
     console.log("full config:", configuration);
@@ -36,7 +36,7 @@ export default function DataConfigurationPanel({ client, configuration }) {
   }, []);
 
   useEffect(() => {
-    if (attitude != {} && behavior != {}) {
+    if (attitude && behavior) {
       change((configuration) => ({
         ...configuration,
         metrics: [
@@ -550,17 +550,21 @@ export default function DataConfigurationPanel({ client, configuration }) {
 
   function change(map) {
     console.log("definition", definition);
-    const newConfiguration = {
-      ...map(configuration),
-      component: "fieldsets-aggregate",
-      fieldsetId: definition.fieldSetId,
-    };
+    if (definition) {
+      const newConfiguration = {
+        ...map(configuration),
+        component: "fieldsets-aggregate",
+        fieldsetId: definition.fieldSetId,
+      };
 
-    newConfiguration.isComplete =
-      newConfiguration.metrics && newConfiguration.axes;
+      newConfiguration.isComplete =
+        newConfiguration.metrics && newConfiguration.axes;
 
-    console.log("newConfiguration:", newConfiguration);
-    client.postMessage("onDataConfigurationChange", newConfiguration);
+      console.log("newConfiguration:", newConfiguration);
+      client.postMessage("onDataConfigurationChange", newConfiguration);
+    } else {
+      console.warn("Change called before definition is setup")
+    }
   }
 
   function getFieldsOfType(...types) {
