@@ -56,13 +56,15 @@ label {
 
 .square-text {
   font-size: 4.7em;
+  font-weight: 500;
   width: 100%;
   align-self: center;
   justify-self: center;
 }
 
 .square-header {
-  font-size: 1.5em;
+  font-size: 1.9em;
+  font-weight: 400;
   width: 100%;
   align-self: center;
   justify-self: center;

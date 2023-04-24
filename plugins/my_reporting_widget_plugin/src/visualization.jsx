@@ -57,22 +57,22 @@ function TextContent({ data, viewConfiguration }) {
         <tbody>
           <tr>
             <td className="square-cell">
-              <p className="square-header">Truly Loyal</p>
-              <p className="square-text">{loyal}%</p>
+              <p className="square-header">Accessible</p>
+              <p className="square-text" style={{ color: "#A4C660" }}>{acces}%</p>
             </td>
             <td className="square-cell">
-              <p className="square-header">Accessible</p>
-              <p className="square-text">{acces}%</p>
+              <p className="square-header">Truly Loyal</p>
+              <p className="square-text" style={{ color: "#58B0E3" }}>{loyal}%</p>
             </td>
           </tr>
           <tr>
             <td className="square-cell">
-              <p className="square-header">Trapped</p>
-              <p className="square-text">{trap}%</p>
+              <p className="square-header">High Risk</p>
+              <p className="square-text" style={{ color: "#D94020" }}>{risk}%</p>
             </td>
             <td className="square-cell">
-              <p className="square-header">High Risk</p>
-              <p className="square-text">{risk}%</p>
+              <p className="square-header">Trapped</p>
+              <p className="square-text" style={{ color: "#F8971D" }}>{trap}%</p>
             </td>
           </tr>
         </tbody>
