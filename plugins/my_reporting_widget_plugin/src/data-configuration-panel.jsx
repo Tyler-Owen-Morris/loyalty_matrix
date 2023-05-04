@@ -36,6 +36,8 @@ export default function DataConfigurationPanel({ client, configuration }) {
   }, []);
 
   useEffect(() => {
+    console.log("attitude:", attitude);
+    console.log("behavior:", behavior);
     if (attitude && behavior) {
       change((configuration) => ({
         ...configuration,
@@ -498,20 +500,22 @@ export default function DataConfigurationPanel({ client, configuration }) {
   }
 
   function onAttitudeChange(field) {
+    console.log("att chng:", field);
     let att = {
       id: "metric",
       label: field.name,
-      field: field.id,
+      field: field.fieldId,
       function: "avg",
     };
     setAttitude(att)
   }
 
   function onBehaviorChange(field) {
+    console.log("behav chng:", field);
     let behav = {
       id: "metric",
       label: field.name,
-      field: field.id,
+      field: field.fieldId,
       function: "avg",
     };
     setBehavior(behav);
