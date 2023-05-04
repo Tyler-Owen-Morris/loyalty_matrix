@@ -37,7 +37,7 @@ function TextContent({ data, viewConfiguration }) {
   let mydata = data.data[0].children;
   for (let i = 0; i < mydata.length; i++) {
     let myId = mydata[i].id;
-    let myVal = (mydata[i].value * 100).toFixed(1);
+    let myVal = (mydata[i].value * 100).toFixed(0);
     if (myId == "truly-loyal") {
       loyal = myVal.toString();
     }

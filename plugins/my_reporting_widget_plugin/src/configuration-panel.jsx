@@ -25,11 +25,11 @@ function Content({
 				client={client}
 				configuration={dataConfiguration}
 			/>
-			<ViewConfigurationPanel
+			{/* <ViewConfigurationPanel
 				client={client}
 				data={data}
 				configuration={viewConfiguration}
-			/>
+			/> */}
 		</PanelContainer>
 	);
 }
