@@ -12,8 +12,8 @@ import {
 
 export default function DataConfigurationPanel({ client, configuration }) {
   const [definition, setDefinition] = useState();
-  const [attitude, setAttitude] = useState({});
-  const [behavior, setBehavior] = useState({});
+  const [attitude, setAttitude] = useState(null);
+  const [behavior, setBehavior] = useState(null);
 
   useEffect(() => {
     console.log("full config:", configuration);
@@ -34,6 +34,215 @@ export default function DataConfigurationPanel({ client, configuration }) {
       canceled = true;
     };
   }, []);
+
+  useEffect(() => {
+    console.log("attitude:", attitude);
+    console.log("behavior:", behavior);
+    if (attitude && behavior) {
+      change((configuration) => ({
+        ...configuration,
+        metrics: [
+          {
+            id: "metric",
+            label: "Attitude",
+            field: attitude.field,
+            function: "avg",
+          },
+          {
+            id: "metric2",
+            label: "Behavior",
+            field: behavior.field,
+            function: "avg",
+          },
+          {
+            type: "custom",
+            id: "truly-loyal",
+            label: "Truly Loyal",
+            equation: "Loyal / Total",
+            function: "count",
+            metrics: [
+              {
+                id: "Loyal",
+                field: "_recordId",
+                function: "count",
+                label: "Loyal Count",
+                filters: [
+                  {
+                    type: "filter",
+                    filter: {
+                      field: attitude.field,
+                      operator: "greaterThanOrEqualTo",
+                      operand: 4,
+                    },
+                  },
+                  {
+                    type: "filter",
+                    filter: {
+                      field: behavior.field,
+                      operator: "greaterThanOrEqualTo",
+                      operand: 4,
+                    },
+                  },
+                ],
+              },
+              {
+                id: "Total",
+                field: "_recordId",
+                label: "Total",
+                function: "count",
+              },
+            ],
+          },
+          {
+            type: "custom",
+            id: "trapped",
+            label: "Trapped",
+            equation: "Trapped / Total",
+            function: "count",
+            metrics: [
+              {
+                id: "Trapped",
+                field: "_recordId",
+                function: "count",
+                label: "Trapped Count",
+                filters: [
+                  {
+                    type: "filter",
+                    filter: {
+                      field: attitude.field,
+                      operator: "greaterThanOrEqualTo",
+                      operand: 4,
+                    },
+                  },
+                  {
+                    type: "filter",
+                    filter: {
+                      field: behavior.field,
+                      operator: "lessThan",
+                      operand: 4,
+                    },
+                  },
+                ],
+              },
+              {
+                id: "Total",
+                field: "_recordId",
+                label: "Total",
+                function: "count",
+              },
+            ],
+          },
+          {
+            type: "custom",
+            id: "accessible",
+            label: "Accessible",
+            equation: "Accessible / Total",
+            function: "count",
+            metrics: [
+              {
+                id: "Accessible",
+                field: "_recordId",
+                function: "count",
+                label: "Accessible Count",
+                filters: [
+                  {
+                    type: "filter",
+                    filter: {
+                      field: attitude.field,
+                      operator: "lessThan",
+                      operand: 4,
+                    },
+                  },
+                  {
+                    type: "filter",
+                    filter: {
+                      field: behavior.field,
+                      operator: "greaterThanOrEqualTo",
+                      operand: 4,
+                    },
+                  },
+                ],
+              },
+              {
+                id: "Total",
+                field: "_recordId",
+                label: "Total",
+                function: "count",
+              },
+            ],
+          },
+          {
+            type: "custom",
+            id: "high-risk",
+            label: "High Risk",
+            equation: "HighRisk / Total",
+            function: "count",
+            metrics: [
+              {
+                id: "HighRisk",
+                field: "_recordId",
+                function: "count",
+                label: "High Risk Count",
+                filters: [
+                  {
+                    type: "filter",
+                    filter: {
+                      field: attitude.field,
+                      operator: "lessThan",
+                      operand: 4,
+                    },
+                  },
+                  {
+                    type: "filter",
+                    filter: {
+                      field: behavior.field,
+                      operator: "lessThan",
+                      operand: 4,
+                    },
+                  },
+                ],
+              },
+              {
+                id: "Total",
+                field: "_recordId",
+                label: "Total",
+                function: "count",
+              },
+            ],
+          },
+        ],
+        axes: [
+          {
+            id: "x-axis",
+            label: "X-Axis",
+            dimensions: [
+              {
+                id: "x-axis-dimension",
+                label: "Survey Metadata - Progress",
+                fieldId: "progress",
+              },
+            ],
+          },
+          {
+            id: "z-axis",
+            label: "Z-Axis",
+            dimensions: [
+              {
+                id: "metrics",
+                label: "filler dimension",
+                fieldId: "progress",
+              },
+            ],
+          },
+        ],
+      }));
+      console.log("after change config:", configuration);
+    } else {
+      // TODO: setup a dummy config that does not include both dimensions
+      console.log("not setting up new config!")
+    }
+
+  }, [attitude, behavior])
 
   if (!definition) {
     return (
@@ -67,7 +276,7 @@ export default function DataConfigurationPanel({ client, configuration }) {
         defaultValue={metric && metric.field}
         fields={getFieldsOfType("ScalarValue", "EnumerableScalarValue")}
         placement="top-start"
-        onChange={onMetricChange}
+        onChange={onAttitudeChange}
       />
       <FieldSelectMenu
         client={client}
@@ -75,7 +284,7 @@ export default function DataConfigurationPanel({ client, configuration }) {
         defaultValue={metric2 && metric2.field}
         fields={getFieldsOfType("ScalarValue", "EnumerableScalarValue")}
         placement="top-start"
-        onChange={onMetricChange}
+        onChange={onBehaviorChange}
       />
       {/* <FieldSelectMenu
         client={client}
@@ -96,13 +305,13 @@ export default function DataConfigurationPanel({ client, configuration }) {
         {
           id: "metric",
           label: "Attitude",
-          field: "DM_6qorhx4",
+          field: attitude.field,
           function: "avg",
         },
         {
           id: "metric2",
           label: "Behavior",
-          field: "DM_1s583fa",
+          field: behavior.field,
           function: "avg",
         },
         {
@@ -121,7 +330,7 @@ export default function DataConfigurationPanel({ client, configuration }) {
                 {
                   type: "filter",
                   filter: {
-                    field: "DM_6qorhx4",
+                    field: attitude.field,
                     operator: "greaterThanOrEqualTo",
                     operand: 4,
                   },
@@ -129,7 +338,7 @@ export default function DataConfigurationPanel({ client, configuration }) {
                 {
                   type: "filter",
                   filter: {
-                    field: "DM_1s583fa",
+                    field: behavior.field,
                     operator: "greaterThanOrEqualTo",
                     operand: 4,
                   },
@@ -160,7 +369,7 @@ export default function DataConfigurationPanel({ client, configuration }) {
                 {
                   type: "filter",
                   filter: {
-                    field: "DM_6qorhx4",
+                    field: attitude.field,
                     operator: "greaterThanOrEqualTo",
                     operand: 4,
                   },
@@ -168,7 +377,7 @@ export default function DataConfigurationPanel({ client, configuration }) {
                 {
                   type: "filter",
                   filter: {
-                    field: "DM_1s583fa",
+                    field: behavior.field,
                     operator: "lessThan",
                     operand: 4,
                   },
@@ -199,7 +408,7 @@ export default function DataConfigurationPanel({ client, configuration }) {
                 {
                   type: "filter",
                   filter: {
-                    field: "DM_6qorhx4",
+                    field: attitude.field,
                     operator: "lessThan",
                     operand: 4,
                   },
@@ -207,7 +416,7 @@ export default function DataConfigurationPanel({ client, configuration }) {
                 {
                   type: "filter",
                   filter: {
-                    field: "DM_1s583fa",
+                    field: behavior.field,
                     operator: "greaterThanOrEqualTo",
                     operand: 4,
                   },
@@ -238,7 +447,7 @@ export default function DataConfigurationPanel({ client, configuration }) {
                 {
                   type: "filter",
                   filter: {
-                    field: "DM_6qorhx4",
+                    field: attitude.field,
                     operator: "lessThan",
                     operand: 4,
                   },
@@ -246,7 +455,7 @@ export default function DataConfigurationPanel({ client, configuration }) {
                 {
                   type: "filter",
                   filter: {
-                    field: "DM_1s583fa",
+                    field: behavior.field,
                     operator: "lessThan",
                     operand: 4,
                   },
@@ -291,353 +500,25 @@ export default function DataConfigurationPanel({ client, configuration }) {
   }
 
   function onAttitudeChange(field) {
+    console.log("att chng:", field);
     let att = {
       id: "metric",
       label: field.name,
-      field: field.id,
+      field: field.fieldId,
       function: "avg",
     };
-    change((configuration) => ({
-      ...configuration,
-      metrics: [
-        att,
-        behavior,
-        {
-          type: "custom",
-          id: "truly-loyal",
-          label: "Truly Loyal",
-          equation: "Loyal / Total",
-          function: "count",
-          metrics: [
-            {
-              id: "Loyal",
-              field: "_recordId",
-              function: "count",
-              label: "Loyal Count",
-              filters: [
-                {
-                  type: "filter",
-                  filter: {
-                    field: field.id,
-                    operator: "greaterThanOrEqualTo",
-                    operand: 4,
-                  },
-                },
-                {
-                  type: "filter",
-                  filter: {
-                    field: behavior.field,
-                    operator: "greaterThanOrEqualTo",
-                    operand: 4,
-                  },
-                },
-              ],
-            },
-            {
-              id: "Total",
-              field: "_recordId",
-              label: "Total",
-              function: "count",
-            },
-          ],
-        },
-        {
-          type: "custom",
-          id: "trapped",
-          label: "Trapped",
-          equation: "Trapped / Total",
-          function: "count",
-          metrics: [
-            {
-              id: "Trapped",
-              field: "_recordId",
-              function: "count",
-              label: "Trapped Count",
-              filters: [
-                {
-                  type: "filter",
-                  filter: {
-                    field: field.id,
-                    operator: "greaterThanOrEqualTo",
-                    operand: 4,
-                  },
-                },
-                {
-                  type: "filter",
-                  filter: {
-                    field: behavior.field,
-                    operator: "lessThan",
-                    operand: 4,
-                  },
-                },
-              ],
-            },
-            {
-              id: "Total",
-              field: "_recordId",
-              label: "Total",
-              function: "count",
-            },
-          ],
-        },
-        {
-          type: "custom",
-          id: "accessible",
-          label: "Accessible",
-          equation: "Accessible / Total",
-          function: "count",
-          metrics: [
-            {
-              id: "Accessible",
-              field: "_recordId",
-              function: "count",
-              label: "Accessible Count",
-              filters: [
-                {
-                  type: "filter",
-                  filter: {
-                    field: field.id,
-                    operator: "lessThan",
-                    operand: 4,
-                  },
-                },
-                {
-                  type: "filter",
-                  filter: {
-                    field: behavior.field,
-                    operator: "greaterThanOrEqualTo",
-                    operand: 4,
-                  },
-                },
-              ],
-            },
-            {
-              id: "Total",
-              field: "_recordId",
-              label: "Total",
-              function: "count",
-            },
-          ],
-        },
-        {
-          type: "custom",
-          id: "high-risk",
-          label: "High Risk",
-          equation: "high-risk / Total",
-          function: "count",
-          metrics: [
-            {
-              id: "high-risk",
-              field: "_recordId",
-              function: "count",
-              label: "High Risk Count",
-              filters: [
-                {
-                  type: "filter",
-                  filter: {
-                    field: "DM_6qorhx4",
-                    operator: "lessThan",
-                    operand: 4,
-                  },
-                },
-                {
-                  type: "filter",
-                  filter: {
-                    field: "DM_1s583fa",
-                    operator: "lessThan",
-                    operand: 4,
-                  },
-                },
-              ],
-            },
-            {
-              id: "Total",
-              field: "_recordId",
-              label: "Total",
-              function: "count",
-            },
-          ],
-        },
-      ],
-    }));
-    console.log("after change config:", configuration);
+    setAttitude(att)
   }
 
-  function onMetric2Change(field) {
-    change((configuration) => ({
-      ...configuration,
-      metrics: [
-        {
-          id: "metric",
-          label: "metric1",
-          field: "DM_1s583fa",
-          function: "avg",
-        },
-        {
-          id: "metric2",
-          label: "metric2",
-          field: "DM_6qorhx4",
-          function: "avg",
-        },
-        {
-          type: "custom",
-          id: "truly-loyal",
-          label: "Truly Loyal",
-          equation: "Loyal / Total",
-          function: "count",
-          metrics: [
-            {
-              id: "Loyal",
-              field: "_recordId",
-              function: "count",
-              label: "Loyal Count",
-              filters: [
-                {
-                  type: "filter",
-                  filter: {
-                    field: "DM_6qorhx4",
-                    operator: "greaterThanOrEqualTo",
-                    operand: 4,
-                  },
-                },
-                {
-                  type: "filter",
-                  filter: {
-                    field: "DM_1s583fa",
-                    operator: "greaterThanOrEqualTo",
-                    operand: 4,
-                  },
-                },
-              ],
-            },
-            {
-              id: "Total",
-              field: "_recordId",
-              label: "Total",
-              function: "count",
-            },
-          ],
-        },
-        {
-          type: "custom",
-          id: "trapped",
-          label: "Trapped",
-          equation: "Trapped / Total",
-          function: "count",
-          metrics: [
-            {
-              id: "Trapped",
-              field: "_recordId",
-              function: "count",
-              label: "Trapped Count",
-              filters: [
-                {
-                  type: "filter",
-                  filter: {
-                    field: "DM_6qorhx4",
-                    operator: "greaterThanOrEqualTo",
-                    operand: 4,
-                  },
-                },
-                {
-                  type: "filter",
-                  filter: {
-                    field: "DM_1s583fa",
-                    operator: "lessThan",
-                    operand: 4,
-                  },
-                },
-              ],
-            },
-            {
-              id: "Total",
-              field: "_recordId",
-              label: "Total",
-              function: "count",
-            },
-          ],
-        },
-        {
-          type: "custom",
-          id: "accessible",
-          label: "Accessible",
-          equation: "Accessible / Total",
-          function: "count",
-          metrics: [
-            {
-              id: "Accessible",
-              field: "_recordId",
-              function: "count",
-              label: "Accessible Count",
-              filters: [
-                {
-                  type: "filter",
-                  filter: {
-                    field: "DM_6qorhx4",
-                    operator: "lessThan",
-                    operand: 4,
-                  },
-                },
-                {
-                  type: "filter",
-                  filter: {
-                    field: "DM_1s583fa",
-                    operator: "greaterThanOrEqualTo",
-                    operand: 4,
-                  },
-                },
-              ],
-            },
-            {
-              id: "Total",
-              field: "_recordId",
-              label: "Total",
-              function: "count",
-            },
-          ],
-        },
-        {
-          type: "custom",
-          id: "high-risk",
-          label: "High Risk",
-          equation: "high-risk / Total",
-          function: "count",
-          metrics: [
-            {
-              id: "high-risk",
-              field: "_recordId",
-              function: "count",
-              label: "High Risk Count",
-              filters: [
-                {
-                  type: "filter",
-                  filter: {
-                    field: "DM_6qorhx4",
-                    operator: "lessThan",
-                    operand: 4,
-                  },
-                },
-                {
-                  type: "filter",
-                  filter: {
-                    field: "DM_1s583fa",
-                    operator: "lessThan",
-                    operand: 4,
-                  },
-                },
-              ],
-            },
-            {
-              id: "Total",
-              field: "_recordId",
-              label: "Total",
-              function: "count",
-            },
-          ],
-        },
-      ],
-    }));
-    console.log("after change config:", configuration);
+  function onBehaviorChange(field) {
+    console.log("behav chng:", field);
+    let behav = {
+      id: "metric",
+      label: field.name,
+      field: field.fieldId,
+      function: "avg",
+    };
+    setBehavior(behav);
   }
 
   function onDimensionChange(field) {
@@ -673,17 +554,21 @@ export default function DataConfigurationPanel({ client, configuration }) {
 
   function change(map) {
     console.log("definition", definition);
-    const newConfiguration = {
-      ...map(configuration),
-      component: "fieldsets-aggregate",
-      fieldsetId: definition.fieldSetId,
-    };
+    if (definition) {
+      const newConfiguration = {
+        ...map(configuration),
+        component: "fieldsets-aggregate",
+        fieldsetId: definition.fieldSetId,
+      };
 
-    newConfiguration.isComplete =
-      newConfiguration.metrics && newConfiguration.axes;
+      newConfiguration.isComplete =
+        newConfiguration.metrics && newConfiguration.axes;
 
-    console.log("newConfiguration:", newConfiguration);
-    client.postMessage("onDataConfigurationChange", newConfiguration);
+      console.log("newConfiguration:", newConfiguration);
+      client.postMessage("onDataConfigurationChange", newConfiguration);
+    } else {
+      console.warn("Change called before definition is setup")
+    }
   }
 
   function getFieldsOfType(...types) {
